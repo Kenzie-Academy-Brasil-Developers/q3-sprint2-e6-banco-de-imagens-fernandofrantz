@@ -27,7 +27,7 @@ def upload_files():
                     with open(f"./{files_directory}/{file_extension}/{filename}", "wb") as f:
                         f.write(request.data)
                 else:
-                    message = {'msg': 'Um ou mais arquivos estão sendo adicionados repetidamente'}, 410
+                    message = {'msg': 'Um ou mais arquivos estão sendo adicionados repetidamente'}, 409
 
         if (file_extension not in allowed_files):
             message = {'msg': 'Upload apenas suporta .png, .jpg, .jpeg e .gif'}, 415
@@ -43,7 +43,7 @@ def get_files():
         files = (list_of_files[2])
         for file in files:
             uploaded_files.append(file)
-    return {'uploaded_files': uploaded_files}
+    return {'uploaded_files': uploaded_files}, 200
 
 @app.get("/files/<extension>")
 def get_specific_file(extension):
@@ -53,7 +53,7 @@ def get_specific_file(extension):
         files = (list_of_files[2])
         for file in files:
             uploaded_files.append(file)
-    return {f'uploaded_files_in_{extension}': uploaded_files}
+    return {f'uploaded_files_in_{extension}': uploaded_files}, 200
 
 
 

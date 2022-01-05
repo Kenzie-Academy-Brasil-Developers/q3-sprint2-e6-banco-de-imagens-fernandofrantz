@@ -20,7 +20,7 @@ def upload_files():
                     with open(f"./{files_directory}/{file_extension}/{filename}", "wb") as f:
                         f.write(request.data)
                 else:
-                    message = {'msg': 'Um ou mais arquivos estão sendo adicionados repetidamente'}, 410
+                    message = {'msg': 'Um ou mais arquivos estão sendo adicionados repetidamente'}, 409
 
         if (file_extension not in allowed_files):
             message = {'msg': 'Upload apenas suporta .png, .jpg, .jpeg e .gif'}, 415
