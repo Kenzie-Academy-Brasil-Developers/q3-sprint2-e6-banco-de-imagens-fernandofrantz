@@ -1,13 +1,8 @@
-from flask import Flask
-
-app = Flask(__name__)
-
-if (__name__ == "__main__"):
-    app.run()
-
-from flask import Flask, request, send_from_directory, jsonify
+from flask import Flask, request, send_from_directory
 from os import error, getenv
 import os
+
+app = Flask(__name__)
 
 app.config['MAX_CONTENT_LENGTH'] = int(getenv('MAX_CONTENT_LENGTH')) * 1000 * 1000
 
@@ -59,35 +54,32 @@ def get_specific_file(extension):
 # por fazer o download do arquivo solicitado em file_name;
 @app.get('/download/<filename>')
 def download_file(filename):
-    ...
-    return ''
+    splited = filename.split('.')
+    file_extension = splited[len(splited) -1]
+
+    return send_from_directory(
+      directory=f"./images/{file_extension}", 
+      path=filename, 
+      as_attachment=True
+    ), 200
 
 # Rota GET com o endpoint /download-zip com query_params 
 # (file_extension, compression_ratio) para especificar o 
 # tipo de arquivo para baixar todos compactados e também 
 # a taxa de compressão.
-@app.get('/download-zip?file_extension&compression_ratio')
-def downloadZip(file_extension, compression_ratio):
-    ...
-    return ''
+@app.get('/download-zip')
+def downloadZip():
+    file_extension = request.args.get('file_extension')
+    compression_rate = request.args.get('compression_rate')
 
+    if (int(compression_rate) < 6 or int(compression_rate) == False):
+        compression_rate = 6
 
+    os.system(f'zip -r zip/{file_extension}.zip images/{file_extension} * -{compression_rate}')
 
-
-#@app.get("/images/<filename>")
-#def get_specific_file(filename):
-#    splited = filename.split('.')
-#    file_extension = splited[len(splited) -1]
-#
-#    print(filename)
-#    print('*'*15)
-#    print(file_extension)
-#    print('*'*15)
-#
-#    return send_from_directory(
-#      directory=f"./images/{file_extension}", 
-#      path=filename, 
-#      as_attachment=True
-#    ), 200
-
+    return send_from_directory(
+        directory="./zip", 
+        path=f'{file_extension}.zip', 
+        as_attachment=True
+    ), 200
 

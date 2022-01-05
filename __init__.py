@@ -9,6 +9,7 @@ allowed_files = getenv('ALLOWED_EXTENSIONS').split(',')
 def createDirectories():
     try:
         os.mkdir('images')
+        os.mkdir('zip')
         print('Directory created')
     except FileExistsError:
         print('Directory already exists')
