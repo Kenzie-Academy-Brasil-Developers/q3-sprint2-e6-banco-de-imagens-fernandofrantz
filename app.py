@@ -17,9 +17,17 @@ def upload_files():
         filename = request.files[file].filename
         splited = filename.split('.')   
         file_extension = splited[len(splited) -1]
+
         if (file_extension in allowed_files):
-            with open(f"./images/{file_extension}/{filename}", "wb") as f:
-                f.write(request.data)
+            content = os.walk(f'images/{file_extension}')
+            for insider_file in content:
+                print(filename not in insider_file[2])
+                if(filename not in insider_file[2]):
+                    with open(f"./images/{file_extension}/{filename}", "wb") as f:
+                        f.write(request.data)
+                else:
+                    message = {'msg': 'Um ou mais arquivos estão sendo adicionados repetidamente'}, 410
+
         if (file_extension not in allowed_files):
             message = {'msg': 'Upload apenas suporta .png, .jpg, .jpeg e .gif'}, 415
     return message
@@ -34,7 +42,6 @@ def get_files():
         files = (list_of_files[2])
         for file in files:
             uploaded_files.append(file)
-            print(uploaded_files)
     return {'uploaded_files': uploaded_files}
 
 @app.get("/files/<extension>")
@@ -45,7 +52,6 @@ def get_specific_file(extension):
         files = (list_of_files[2])
         for file in files:
             uploaded_files.append(file)
-            print(uploaded_files)
     return {f'uploaded_files_in_{extension}': uploaded_files}
 
 
@@ -82,4 +88,3 @@ def downloadZip():
         path=f'{file_extension}.zip', 
         as_attachment=True
     ), 200
-
